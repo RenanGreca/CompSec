@@ -68,12 +68,9 @@ int main(int argc, char *argv[]) {
     int ip_min = atoi(token);
     int ip_max;
 
-    if (iprange[1] == NULL) {
+    if ( (ip_max = atoi(iprange[1])) < ip_min ) {
         // No IP range, just one
         ip_max = ip_min;
-    } else {
-        // IP range
-        ip_max = atoi(iprange[1]);
     }
 
     // If no port is defined, check all(?) of them
@@ -92,12 +89,9 @@ int main(int argc, char *argv[]) {
         }
 
         port_min = atoi(portrange[0]);
-        if (portrange[1] == NULL) {
+        if ( (port_max = atoi(portrange[1])) < port_min ) {
             // Just one port
             port_max = port_min;
-        } else {
-            // Range of ports
-            port_max = atoi(portrange[1]);
         }
     }
     
@@ -139,6 +133,7 @@ int main(int argc, char *argv[]) {
             if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0) {
                 close(sockfd);
 
+                printf("%s\t%d\terror %d (%s)\n", ip, port, errno, strerror(errno));
                 if (errno == 51) { 
                     // Error 51 means network unreachable, IP inactive
                     printf("%s\t%d\tIP disabled; error %d (%s)\n", ip, port, errno, strerror(errno));
