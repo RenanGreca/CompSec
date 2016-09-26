@@ -7,24 +7,8 @@
 #  define COMMON_DIGEST_FOR_OPENSSL
 #  include <CommonCrypto/CommonDigest.h>
 #  define SHA1 CC_SHA1
-
-void compute_md5(char *str, unsigned char digest[16]) {
-    MD5_CTX ctx;
-    MD5_Init(&ctx);
-    MD5_Update(&ctx, str, strlen(str));
-    MD5_Final(digest, &ctx);
-}
-
 #else
 #  include <openssl/md5.h>
-
-void compute_md5(char *str, unsigned char digest[16]) {
-    MD5Context ctx;
-    MD5Init(&ctx);
-    MD5Update(&ctx, str, strlen(str));
-    MD5Final(digest, &ctx);
-}
-
 #endif
 
 static const unsigned char hash[17] = {0x8d, 0x7b, 0x35, 0x6e, 0xae, 0x43, 0xad, 0xcd, 0x6a, 0xd3, 0xee, 0x12, 0x4c, 0x3d, 0xcf, 0x1e, '\0'};
@@ -33,6 +17,13 @@ static const char alphabet[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 "abcdefghijklmnopqrstuvwxyz"
 "0123456789";
+
+void compute_md5(char *str, unsigned char digest[16]) {
+    MD5_CTX ctx;
+    MD5_Init(&ctx);
+    MD5_Update(&ctx, str, strlen(str));
+    MD5_Final(digest, &ctx);
+}
 
 char *bruteForce(char *word, int index, int max_len) {
 
