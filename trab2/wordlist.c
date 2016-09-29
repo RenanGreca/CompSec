@@ -2,6 +2,7 @@
 #include <stdlib.h>
 // #include <dirent.h>
 #define NAME_MAX 255
+#define WORD_MAX 200000
 #include "tinydir.h"
 
 void ReadWords(const char *filename, char *words[], int *count, int max_number_of_words) {
@@ -17,7 +18,7 @@ void ReadWords(const char *filename, char *words[], int *count, int max_number_o
         // note: "!=1" checks for end-of-file; using feof for that is usually a bug
 
         // Allocate memory for the word, because temp is too temporary
-        printf("%s\n", temp);
+        //printf("%s\n", temp);
         words[i] = strdup(temp);
     }
     fclose(f);
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]) {
     int i;
     tinydir_open_sorted(&dir, "/Users/renangreca/OneDrive/repos/compsec/trab2/legiaourbana");
 
-    char *words[2000];
+    char *words[WORD_MAX];
     int count = 0;
 
     for (i = 0; i < dir.n_files; i++)
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]) {
 
         printf("%s\n", file.name);
         
-        ReadWords(file.path, words, &count, 2000);
+        ReadWords(file.path, words, &count, WORD_MAX);
 
     }
 
