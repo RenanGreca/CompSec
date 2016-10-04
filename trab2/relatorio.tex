@@ -238,7 +238,7 @@ while (*count < max) {
 
 \subsection{Quebra de senha por força bruta}
 A segunda parte do trabalho foi a mais interessante delas.
-Seus objetivos eram dois: primeiro, descobrir uma senha com hash conhecido e, segundo, usar essa senha para decifrar uma dica que seria necessária na terceira parte do trabalho.
+Seu objetivo era desenvolver um programa, \texttt{brutexor}, com duas funcionalidaes: primeiro, descobre uma senha com hash conhecido e, segundo, usa essa senha para decifrar uma dica que seria necessária na terceira parte do trabalho.
 
 Para garantir que estávamos no caminho certo, foi utilizada uma \textit{rainbow table} encontrada na Internet para descobrir a senha a partir do hash MD5 e, então, decifrar a dica.
 \textit{Rainbow tables} são tabelas pré-computadas de hashes, que tornam a quebra desse tipo de cifra trivial.
@@ -478,6 +478,7 @@ Esse arquivo dicionário deveria então ser usado como argumento para o programa
 Dada a dica encontrada na segunda parte, seria necessário criar um diretório contendo arquivos de texto com letras de músicas da banda Legião Urbana.
 Portanto, foi desenvolvido um script em Python, \texttt{crawler.py} que utiliza a biblioteca BeautifulSoup para pegar as letras das músicas do site \textbf{\url{letras.mus.br}}.
 O script limpa o texto de tags HTML e salva cada letra em um arquivo de texto separado, usando o título de cada canção como nome.
+Ao rodar o \texttt{wordlist} com essas letras, o resultado é um arquivo \texttt{dict.txt} com 5927 palavras distintas.
 
 Após a execução do script Python e do \texttt{wordlist}, é possível utilizar esses dados para quebrar a senha com o John The Ripper utilizando o seguinte comando:
 
@@ -485,11 +486,53 @@ Após a execução do script Python e do \texttt{wordlist}, é possível utiliza
 john --wordlist=dict.txt _etc_shadow.txt
 \end{verbatim}
 
-Dessa forma, foi possível quebrar uma das senhas presentes no arquivo, a do usuário \textit{eva} — \texttt{Cavalos-marinhos}, palavra presente na letra da canção ``Vento no Litoral''.
-Através de conversas com colegas, foi descoberto que a senha do usuário \textit{beto} era \texttt{cavalo-marinho}, mas essa palavra não está presente em nenhuma letra.
+Dessa forma, foi possível quebrar uma das senhas presentes no arquivo, a do usuário \textit{eva} — ``Cavalos-marinhos'', palavra presente na letra da canção ``Vento no Litoral''.
+Através de conversas com colegas, foi descoberto que a senha do usuário \textit{beto} era ``cavalo-marinho'', mas essa palavra não está presente em nenhuma letra.
 Para verificar isso, foi criado um arquivo de texto contendo apenas essas duas palavras; com ele, o John The Ripper foi capaz de quebrar ambas senhas.
 
 \section{Resultados e conclusões}
+
+Para as execuções dos algoritmos, dois computadores foram usados: ``SgtPepper'', um MacBook Pro, e ``Packard'', um desktop customizado.
+O programa \texttt{wordlist} roda rapidamente em ambos computadores, então sua análise não é muito interessante.
+
+O segundo programa, \texttt{brutexor}, pode ser extremamente lento ou rápido dependendo de algumas condições, portanto há mais a ser dito sobre ele.
+Usando a primeira versão do algoritmo, usando busca em profundidade e sem paralelização, o programa rodou por mais de vinte horas sem sucesso — essa demora motivou o desenvolvimento de versões mais eficientes.
+
+\begin{center}
+  \begin{tabular}{ l | l | l }
+    \hline
+    \textbf{Nome} & ``SgtPepper'' & ``Packard'' \\ \hline \hline
+    S.O. & macOS 10.12 & Linux Mint 17 \\ \hline
+    CPU & Intel Core i5-4308U & Intel Core i7-2600 \\ \hline
+    Clock base & 2.8GHz & 3.4GHz \\ \hline
+    Turbo boost & 3.3GHz & 3.8GHz \\ \hline
+    Cache L3 & 3MB & 8MB \\ \hline
+    Cores/threads & 2/4 & 4/8 \\ \hline
+    RAM & 8GB DDR3L & 8GB DDR3 \\ \hline
+    Armz. & SSD 512GB & HDD 320GB \\ \hline
+    \hline
+  \end{tabular}
+\end{center}
+
+O Packard, que dispõe de um processador quad-core com \textit{hyperthreading}, foi capaz de realizar o algoritmo de força bruta em oito threads paralelas.
+Devido à forma como as letras foram distribuídas, muito rapidamente a thread nº 5 chega à senha ``FACIL'' (pois ela já começa testando as palavras iniciadas em `F').
+Portanto, a execução do programa \texttt{brutexor} nesse computador leva, aproximadamente, meio segundo.
+
+Devido a complicações em instalar a biblioteca OpenMP no macOS, o programa foi testado no SgtPepper sem utilizar paralelização.
+Rodando em apenas uma thread, o \texttt{brutexor} levou aproximadamente 38 segundos para encontrar a senha desejada.
+
+Um fator interessante deste problema é que, dependendo da senha a ser encontrada, ele pode executar em décimos de segundos ou dezenas de horas.
+Em particular, qualquer senha de oito caracteres levaria muito tempo para ser encontrada — e portanto a busca em largura foi adotada.
+A senha começar com `F' também ajuda, pois é uma das primeiras letras do alfabeto e será processada rapidamente por uma das threads.
+Sob a presunção que senhas curtas são mais comuns, acreditamos que o caminho adotado é o mais lógico para este tipo de problema.
+
+O tempo de execução do John The Ripper em ambos computadores também foi comparado.
+No Packard, encontrar a senha ``Cavalos-marinhos'' (e descobrir que as outras não estavam no dicionário) levou 51 segundos, enquanto, no SgtPepper, o processo levou cerca de 30 segundos.
+Isso ocorre porque o Core i5 presente no SgtPepper, apesar de ser mais lento que o Core i7 do Packard, é da família Haswell, que incorporou modificações na arquitetura que favoreceram funções criptográficas, além do armazenamento em SSD que acelera a leitura do arquivo de dicionário. 
+
+Por fim, o desenvolvimento do trabalho nos mostrou que o processo para quebrar senhas com oito ou mais caracteres pode ser incrivelmente demorado, caso não se tenha uma \textit{rainbow table} completa do algoritmo de hash usado; portanto métodos de engenharia social estão cada vez mais comuns entre atacantes.
+As fases de otimização do algoritmo de força bruta também foram fascinantes por um ponto de vista computacional, por mostrarem como formas antigas de segurança, que é o caso do MD5, tornam-se obsoletas com o avanço tecnológico dos microprocessadores..
+
 %
 % The following two commands are all you need in the
 % initial runs of your .tex file to
