@@ -7,7 +7,7 @@
 #include "tinydir.h"
 
 void show_usage() {
-    printf("Correct usage: wordlist [dir-path]\n");
+    printf("Correct usage: wordlist <dir-path>\n");
     printf("dir-path: path of directory containing multiple txt files\n");
 }
 
@@ -54,8 +54,7 @@ void read_words(char *filename, char *words[], int *count, int max) {
     // Words can't have more than 100 characters
     char temp[100];
 
-    while (*count < max)
-    {
+    while (*count < max) {
 
         // Read a word from the file
         if (fscanf(f, "%s", temp) != 1) {
@@ -90,8 +89,7 @@ int main(int argc, char *argv[]) {
     int count = 0;
 
     // Skip the first two files, '.' and '..'.
-    for (i = 2; i < dir.n_files; i++)
-    {
+    for (i = 2; i < dir.n_files; i++) {
         tinydir_file file;
         tinydir_readfile_n(&dir, &file, i);
 

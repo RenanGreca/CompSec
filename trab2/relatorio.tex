@@ -1,0 +1,510 @@
+% !TEX encoding = UTF-8 Unicode
+% This is "sig-alternate.tex" V2.1 April 2013
+% This file should be compiled with V2.5 of "sig-alternate.cls" May 2012
+%
+% This example file demonstrates the use of the 'sig-alternate.cls'
+% V2.5 LaTeX2e document class file. It is for those submitting
+% articles to ACM Conference Proceedings WHO DO NOT WISH TO
+% STRICTLY ADHERE TO THE SIGS (PUBS-BOARD-ENDORSED) STYLE.
+% The 'sig-alternate.cls' file will produce a similar-looking,
+% albeit, 'tighter' paper resulting in, invariably, fewer pages.
+%
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V2.5) produces:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) NO page numbers
+%
+% as against the acm_proc_article-sp.cls file which
+% DOES NOT produce 1) thru' 3) above.
+%
+% Using 'sig-alternate.cls' you have control, however, from within
+% the source .tex file, over both the CopyrightYear
+% (defaulted to 200X) and the ACM Copyright Data
+% (defaulted to X-XXXXX-XX-X/XX/XX).
+% e.g.
+% \CopyrightYear{2007} will cause 2007 to appear in the copyright line.
+% \crdata{0-12345-67-8/90/12} will cause 0-12345-67-8/90/12 to appear in the copyright line.
+%
+% ---------------------------------------------------------------------------------------------------------------
+% This .tex source is an example which *does* use
+% the .bib file (from which the .bbl file % is produced).
+% REMEMBER HOWEVER: After having produced the .bbl file,
+% and prior to final submission, you *NEED* to 'insert'
+% your .bbl file into your source .tex file so as to provide
+% ONE 'self-contained' source file.
+%
+% ================= IF YOU HAVE QUESTIONS =======================
+% Questions regarding the SIGS styles, SIGS policies and
+% procedures, Conferences etc. should be sent to
+% Adrienne Griscti (griscti@acm.org)
+%
+% Technical questions _only_ to
+% Gerald Murray (murray@hq.acm.org)
+% ===============================================================
+%
+% For tracking purposes - this is V2.0 - May 2012
+
+\documentclass{sig-alternate-05-2015}
+% Non-unicode must die
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+
+\usepackage{alltt}
+\usepackage{float}
+\usepackage{listings}
+
+\begin{document}
+
+\lstset{language=C,breaklines=true}
+
+\lstset{
+  literate={í}{{\'i}}1
+           {ç}{{\c c}}1
+		   {¬}{{$\neg$}}1
+		   {ã}{{\~a}}1
+		   {ê}{{\^e}}1
+}
+
+\hyphenation{pri-mei-ros in-clu-í-ram in-dis-po-ní-vel ne-ces-sá-ria pa-la-vras}
+
+% Copyright
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+% DOI
+%\doi{}
+
+% ISBN
+%\isbn{}
+
+%Conference
+%\conferenceinfo{PLDI '13}{June 16--19, 2013, Seattle, WA, USA}
+
+%\acmPrice{\$15.00}
+
+%
+% --- Author Metadata here ---
+%\conferenceinfo{WOODSTOCK}{'97 El Paso, Texas USA}
+%\CopyrightYear{2007} % Allows default copyright year (20XX) to be over-ridden - IF NEED BE.
+%\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
+% --- End of Author Metadata ---
+
+\newcommand{\banner}{\textit{banner} }
+
+\floatstyle{ruled}
+\newfloat{log}{thp}{lop}
+\floatname{log}{Log}
+
+\newfloat{program}{thp}{lop}
+\floatname{program}{Programa}
+
+\title{Processo de quebra de senha usando dicionário e força bruta}
+%\subtitle{[Extended Abstract]
+%\titlenote{A full version of this paper is available as
+%\textit{Author's Guide to Preparing ACM SIG Proceedings Using
+%\LaTeX$2_\epsilon$\ and BibTeX} at
+%\texttt{www.acm.org/eaddress.htm}}}
+%
+% You need the command \numberofauthors to handle the 'placement
+% and alignment' of the authors beneath the title.
+%
+% For aesthetic reasons, we recommend 'three authors at a time'
+% i.e. three 'name/affiliation blocks' be placed beneath the title.
+%
+% NOTE: You are NOT restricted in how many 'rows' of
+% "name/affiliations" may appear. We just ask that you restrict
+% the number of 'columns' to three.
+%
+% Because of the available 'opening page real-estate'
+% we ask you to refrain from putting more than six authors
+% (two rows with three columns) beneath the article title.
+% More than six makes the first-page appear very cluttered indeed.
+%
+% Use the \alignauthor commands to handle the names
+% and affiliations for an 'aesthetic maximum' of six authors.
+% Add names, affiliations, addresses for
+% the seventh etc. author(s) as the argument for the
+% \additionalauthors command.
+% These 'additional authors' will be output/set for you
+% without further effort on your part as the last section in
+% the body of your article BEFORE References or any Appendices.
+
+\numberofauthors{2} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
+\author{
+% You can go ahead and credit any number of authors here,
+% e.g. one 'row of three' or two rows (consisting of one row of three
+% and a second row of one, two or three).
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each line of
+% affiliation/address with \affaddr, and tag the
+% e-mail address with \email.
+%
+% 1st. author
+\alignauthor
+Renan Domingos Merlin Greca\\
+			\affaddr{Universidade Federal do Paraná}\\
+		    \email{renangreca@gmail.com}
+% 2nd. author
+\alignauthor
+José Robyson Aggio Molinari\\
+			\affaddr{Universidade Federal do Paraná}\\
+			\email{aggio13@hotmail.com}
+}
+\date{5 September 2016}
+% Just remember to make sure that the TOTAL number of authors
+% is the number that will appear on the first page PLUS the
+% number that will appear in the \additionalauthors section.
+
+\maketitle
+
+\section{Introdução}
+Este é o relatório do segundo trabalho da disciplina de Introdução à Segurança Computacional, cursada na Universidade Federal do Paraná no segundo semestre de 2016.
+O trabalho era dividido em três partes, cada uma com um objetivo:
+(1) criar um arquivo de dicionário a partir de um diretório contendo arquivos \texttt{txt};
+(2) quebrar, utilizando um algoritmo de força bruta, uma senha dado seu hash MD5;
+e (3) utilizar informações obtidas nas partes (1) e (2) para quebrar um arquivo de senhas.
+
+Cada parte do trabalho continua seus próprios desafios, que são elaborados adiante.
+
+\section{Desenvolvimento}
+Como dito na introdução, este trabalho foi dividido em três partes.
+Nesta seção, são descritos detalhes sobre os problemas e as soluções de cada uma delas.
+
+\subsection{Construção do arquivo dicionário}
+O primeiro objetivo do trabalho foi desenvolver um programa em C, chamado \texttt{wordlist}, para processar arquivos \texttt{txt} em um diretório e criar um arquivo dicionário.
+Para tal, o programa percorre todas as palavras dos arquivos de texto (separadas por espaço ou quebra de linha) e os adiciona a uma lista, evitando palavras duplicadas. A biblioteca \texttt{tinydir} \cite{tinydir} é usada para facilitar a iteração sobre os arquivos no diretório. Ao final da execução, esta lista é escrita em um novo arquivo de texto, chamado \texttt{dict.txt}.
+
+Para compilar o programa, basta executar:
+\begin{verbatim}
+make wordlist
+\end{verbatim}
+
+E, para executá-lo, utiliza-se o seguinte comando:
+\begin{verbatim}
+wordlist <dir-path>
+\end{verbatim}
+
+O argumento \texttt{dir-path} é o caminho do diretório contendo os arquivos de texto.
+
+Os Programas 1 e 2 mostram, respectivamente, os laços para iterar sobre arquivos no diretório e sobre palavras em cada arquivo.
+Juntos, eles permitem a construção do arquivo dicionário.
+
+\begin{program}
+\begin{lstlisting}
+tinydir_open_sorted(&dir, argv[1]);
+
+// Skip the first two files, '.' and '..'.
+for (i = 2; i < dir.n_files; i++) {
+    tinydir_file file;
+    tinydir_readfile_n(&dir, &file, i);
+    
+    read_words(file.path, words, &count, WORD_MAX);
+}
+\end{lstlisting}
+\caption{Laço para iterar sobre os arquivos de texto.}
+\end{program}
+
+\begin{program}
+\begin{lstlisting}
+while (*count < max) {
+
+    // Read a word from the file
+    if (fscanf(f, "%s", temp) != 1) {
+        break;
+    }
+
+    // If word isn't already in words, add it to the array
+    if (!exists(temp, words, (*count))) {
+        words[(*count)] = strdup(temp);
+        (*count)++;
+    }
+}
+\end{lstlisting}
+\caption{Laço para iterar as palavras de cada arquivo.}
+\end{program}
+
+\subsection{Quebra de senha por força bruta}
+A segunda parte do trabalho foi a mais interessante delas.
+Seus objetivos eram dois: primeiro, descobrir uma senha com hash conhecido e, segundo, usar essa senha para decifrar uma dica que seria necessária na terceira parte do trabalho.
+
+Para garantir que estávamos no caminho certo, foi utilizada uma \textit{rainbow table} encontrada na Internet para descobrir a senha a partir do hash MD5 e, então, decifrar a dica.
+\textit{Rainbow tables} são tabelas pré-computadas de hashes, que tornam a quebra desse tipo de cifra trivial.
+A tabela utilizada contém quase um bilhão e meio de palavras — com ela, encontramos facilmente a palavra que desejávamos:
+
+\begin{verbatim}
+	MD5:     8d7b356eae43adcd6ad3ee124c3dcf1e
+	Palavra: FACIL
+\end{verbatim}
+
+Com a chave conhecida, o processo de decifrar a dica era simples: bastou efetuar operações de XOR (ou exclusivo, em C representado pelo operador \texttt{\^}) entre a sequência de caracteres detalhada no enunciado do trabalho e a chave descoberta.
+Isso está descrito no Programa 3.
+Como a chave já era conhecida, bastou esse algoritmo para decifrar a dica:
+
+\begin{verbatim}
+	Cadeia:  0b3430202f27052205292128222619342322272d
+	Dica:    MusicaDaLegiaoUrbana
+\end{verbatim}
+
+\begin{program}
+\begin{lstlisting}
+char input[20] = {0x0b, 0x34, 0x30, 0x20, 0x2f, 0x27, 0x05, 0x22, 0x05, 0x29, 0x21, 0x28, 0x22, 0x26, 0x19, 0x34, 0x23, 0x22, 0x27, 0x2d};
+char key[5] = "FACIL";
+char output[20];
+
+for (i=0; i<20; i++) {
+    output[i] = input[i] ^ key[i % strlen(key)];
+}
+\end{lstlisting}
+\caption{O algoritmo que decifra a dica usando a chave.}
+\end{program}
+
+A seguir, seria necessário criar o programa para descobrir a chave através de exaustão utilizando o hash MD5 dado.
+Para isso, primeiro foi criado um breve algoritmo que calculava o MD5 de ``FACIL'' e o comparava com o hash conhecido, como visto no Programa 4.
+Quando compilado no Linux, o programa usa a biblioteca do OpenSSL para calcular o hash, enquanto no macOS é usada a biblioteca CommonCrypto.
+
+\begin{program}
+\begin{lstlisting}
+void compute_md5(char *str, 
+	unsigned char digest[17]) {
+    MD5_CTX ctx;
+    MD5_Init(&ctx);
+    MD5_Update(&ctx, str, strlen(str));
+    MD5_Final(digest, &ctx);
+    digest[16] = '\0';
+}
+
+char key[20] = "FACIL";
+unsigned char digest[17];
+
+compute_md5(key, digest);
+if (!strcmp((char *) hash,
+	(char *) digest)) {
+    printf("word found: %s\n", key);
+}
+\end{lstlisting}
+\caption{Algoritmo para testar o hash da chave.}
+\end{program}
+
+Por último, foi desenvolvido um algoritmo para percorrer todas as palavras possíveis de 1 a 8 caracteres utilizando um alfabeto alfanumérico (letras maiúsculas, minúsculas e algarismos), calcular o MD5 de cada um e compará-lo ao conhecido.
+Várias iterações desse algoritmo foram escritas, até ser encontrada uma versão que encontrasse a senha em tempo aceitável.
+
+Para desenvolver o algoritmo, o problema foi tratado como uma busca em árvore, onde cada caracter é um nó e os possíveis caracteres seguintes são filhos do caracter anterior.
+Devido às condições da palavra descritas no parágrafo anterior, o resultado é uma árvore em que cada nó tem 62 filhos ($26\times 2$ letras mais $10$ algarismos) e a profundidade máxima é 8.
+O número total de nós é $62^8$ (aproximadamente 218 trilhões), um valor nada trivial para percorrer.
+Nenhuma estrutura de dados similar a uma árvore foi desenvolvida; a abstração foi usada apenas para poder aplicar algoritmos conhecidos ao problema.
+
+A versão inicial utilizava uma busca em profundidade.
+A primeira palavra testada era ``A'', seguida por ``AA'' até chegar em ``AAAAAAAA'', e então percorrer todas as palavras que começam com sete A's e um oitavo caracter.
+Quando todas as palavras começadas em `A' fossem percorridas, ele então partiria para aquelas que começam em `B'.
+O problema dessa solução é que percorrer palavras mais longas é muito demorado — o cálculo do MD5 em si não muda, mas o número de palavras possíveis cresce exponencialmente com cada caracter adicionado.
+Portanto, se a senha fosse simplesmente a palavra ``0'', o programa levaria dezenas de horas para encontrá-la, pois precisaria percorrer  todas as palavras que iniciam com todas as letras do alfabeto maiúsculas e minúsculas.
+Esta função é mostrada no Programa 5.
+
+\begin{program}
+\begin{lstlisting}
+char *brute_force(char *word, 
+           int index, int max_len) {
+    int i;
+    for (i=0; i<62; i++) {
+        word[index] = alphabet[i];
+        word[index+1] = '\0';
+
+        compute_md5(word, digest);
+
+        if (!strcmp((char *) hash,
+        	(char *) digest)) {
+            return word;
+        }
+        if (index < max_len) {
+            char *res = brute_force(word, index+1, max_len);
+            if (res != NULL) {
+                return res;
+            }
+        }
+    }
+    return NULL;
+}
+\end{lstlisting}
+\caption{Algoritmo de busca em profundidade para encontrar a senha.}
+\end{program}
+
+A próxima versão do algoritmo incorporou paralelização em CPU utilizando a biblioteca OpenMP.
+Dessa forma, cada thread da CPU seria responsável por processar palavras iniciadas com certas letras (um conjunto de letras é atribuído para cada thread).
+Apesar do processo acelerado pela computação paralela, a busca em profundidade permaneceu extremamente lenta.
+O Programa 6 mostra o laço e os comandos OpenMP para permitir a paralelização.
+A variável \texttt{thread\_alphabet} contém os segmentos do alfabeto que devem ser usados como caracteres iniciais para cada thread.
+A thread 0, por exemplo, é responsável por testar todas as palavras que iniciam em `A' e outras letras de acordo com o número de threads. 
+
+\begin{program}
+\begin{lstlisting}
+#pragma omp parallel
+{
+    #pragma omp single
+    for (i=0; i<8; i++) {
+
+        #pragma omp task
+        {
+            int tid = omp_get_thread_num();
+
+            int j;
+            for (j=0; j<strlen(thread_alphabet[tid]) && !done; j++) {
+                char *word = malloc(9 * sizeof(char));
+                sprintf(word, "%c", thread_alphabet[tid][j]);
+                brute_force(word, 
+                    1, MAX_LEN);                        
+            }
+        }
+    }
+    #pragma omp taskwait
+}\end{lstlisting}
+\caption{Comandos OpenMP e laço para paralelizar execução.}
+\end{program}
+
+\begin{program}
+\begin{lstlisting}
+int k;
+for (k=1; (k<=MAX_LEN) && !done; k++) {
+    printf("thread %d is testing words of length %d\n", tid, k);
+    int j;
+    for (j=0; j<thread_alphabet_len && !done; j++) {
+        char *word = malloc(9 * sizeof(char));
+        sprintf(word, "%c", thread_alphabet[tid][j]);
+        bruteForce(word, 1, k);                        
+    }
+}
+\end{lstlisting}
+\caption{Laço para ``forçar'' a busca em largura.}
+\end{program}
+
+Portanto, foi cogitado usar busca em largura ao invés de profundidade.
+O algoritmo tradicional de busca em largura exige uma fila FIFO (first in, first out) para armazenar as próximas palavras que devem ser testadas.
+Quando a palavra ``A'' é testada, o algoritmo coloca todas as palavras com dois caracteres que começam com ``A'' na fila.
+Isso permite que todas as palavras curtas sejam testadas antes das palavras mais compridas e, caso a palavra tenha menos que oito caracteres, a execução será notavelmente mais rápida.
+No entanto, a fila FIFO ocupa espaço demasiado em memória — especialmente quando o algoritmo está paralelizado em várias threads.
+Nos nossos testes, em um computador com 8GB de memória principal, a RAM era exaustada durante os testes de palavras com três caracteres, tornando essa versão do algoritmo inviável.
+
+A solução final foi desenvolver um processo que ``forçava'' o algoritmo de busca em profundidade, que utiliza memória desprezível, a testar as palavras em ordem de tamanho.
+Para tal, há um laço adicional na hora de chamar a função de força bruta em cada thread.
+Esse laço faz com que a função seja chamada oito vezes, com o tamanho máximo das palavras aumentado a cada iteração.
+Assim, na primeira iteração a função testará apenas palavras com um caracter, até que na última sejam testadas apenas palavras com oito.
+Esse laço adicional é mostrado no Programa 7.
+Vale observar que a variável \texttt{done} é usada para que todas as threads parem a execução quando uma delas encontrar a senha.
+
+O Programa 8 é a versão final da função de força-bruta, incluindo todas as modificações para a paralelização e a busca em largura.
+Os condicionais também foram reposicionados para otimizar a execução.
+A variável global \texttt{key} armazena a senha encontrada antes de encerrar o procedimento.
+
+\begin{program}
+\begin{lstlisting}
+void brute_force(char *word,
+         int index, int max_len) {
+
+    if (done) return;
+    
+    if (index == max_len) {
+    	// Bottom of recursion, test word
+        unsigned char digest[16];
+        compute_md5(word, digest);
+
+        if (!strcmp((char *) hash, 
+        		(char *) digest)) {
+        	// Word found, end execution
+            done = true;
+            key = strdup(word);
+        }
+    } else if (index < max_len) {
+    	// Word not long enough, go further
+        int i;
+        for (i=0; i<alphabet_len && !done; i++) {
+            word[index] = alphabet[i];
+            word[index+1] = '\0';
+
+            bruteForce(word, index+1, max_len);
+        }
+    }
+}
+\end{lstlisting}
+\caption{Versão final da função de força bruta}
+\end{program}
+
+Por fim, o programa sofreu pequenas alterações para funcionar com ou sem paralelização e independente do número de threads disponíveis no computador.
+O Programa 9 mostra o processo para criar blocos do alfabeto que serão alocados para cada thread disponível.
+A constante OPENMP é definida apenas se o programa for compilado para ser compatível com multiprocessamento.
+
+\begin{program}
+\begin{lstlisting}
+// If OpenMP is disabled, number of threads is 1.
+#if defined(OPENMP)
+    int num_threads = omp_get_num_threads();
+#else
+    int num_threads = 1;
+#endif
+
+char *thread_alphabet[num_threads];
+int thread_alphabet_len = ((alphabet_len/num_threads)+1);
+
+// Each thread gets a portion of the alphabet allocated to it. 
+for (i = 0; i < num_threads; ++i) {
+    thread_alphabet[i] = malloc( thread_alphabet_len * sizeof(char) );
+    thread_alphabet[i][0] = '\0';
+}
+
+char temp[2];
+for (i=0; i<alphabet_len; i++) {
+    sprintf(temp, "%c", alphabet[i]);
+    strcat(thread_alphabet[i % num_threads], temp);
+}\end{lstlisting}
+\caption{Alocação de blocos do alfabeto}
+\end{program}
+
+\subsection{Quebra de arquivo de senha usando\\ arquivo dicionário}
+
+O objetivo da terceira e última parte do trabalho era usar a dica encontrada na segunda parte para encontrar arquivos de texto e então usar o \texttt{wordlist} para gerar um arquivo dicionário.
+Esse arquivo dicionário deveria então ser usado como argumento para o programa John The Ripper, uma solução open-source para quebra de senhas, para quebrar o arquivo \texttt{\_etc\_shadow.txt}.
+
+Dada a dica encontrada na segunda parte, seria necessário criar um diretório contendo arquivos de texto com letras de músicas da banda Legião Urbana.
+Portanto, foi desenvolvido um script em Python, \texttt{crawler.py} que utiliza a biblioteca BeautifulSoup para pegar as letras das músicas do site \textbf{\url{letras.mus.br}}.
+O script limpa o texto de tags HTML e salva cada letra em um arquivo de texto separado, usando o título de cada canção como nome.
+
+Após a execução do script Python e do \texttt{wordlist}, é possível utilizar esses dados para quebrar a senha com o John The Ripper utilizando o seguinte comando:
+
+\begin{verbatim}
+john --wordlist=dict.txt _etc_shadow.txt
+\end{verbatim}
+
+Dessa forma, foi possível quebrar uma das senhas presentes no arquivo, a do usuário \textit{eva} — \texttt{Cavalos-marinhos}, palavra presente na letra da canção ``Vento no Litoral''.
+Através de conversas com colegas, foi descoberto que a senha do usuário \textit{beto} era \texttt{cavalo-marinho}, mas essa palavra não está presente em nenhuma letra.
+Para verificar isso, foi criado um arquivo de texto contendo apenas essas duas palavras; com ele, o John The Ripper foi capaz de quebrar ambas senhas.
+
+\section{Resultados e conclusões}
+%
+% The following two commands are all you need in the
+% initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+\bibliography{sigproc}  % sigproc.bib is the name of the Bibliography in this case
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+%
+% ACM needs 'a single self-contained file'!
+%
+%APPENDICES are optional
+%\balancecolumns
+%\balancecolumns % GM June 2007
+% That's all folks!
+\end{document}

@@ -13,8 +13,11 @@ all:		wordlist brutexor
 wordlist: 	wordlist.c
 			$(cc) wordlist.c -o wordlist
 
-brutexor: 	brutexor.c
+brutexor:	brutexor.c
 			$(cc) brutexor.c -o brutexor $(CRYPTO_FLAGS) $(OPENMP_FLAGS)
 
+decrypt:	decrypt.c
+			$(cc) decrypt.c -o decrypt
+
 clean:
-			rm wordlist brutexor
+			rm wordlist brutexor decrypt *.aux *.log *.blg *.bbl *.synctex.gz
