@@ -172,20 +172,20 @@ José Robyson Aggio Molinari\\
 
 \section{Introdução}
 Este é o relatório do segundo trabalho da disciplina de Introdução à Segurança Computacional, cursada na Universidade Federal do Paraná no segundo semestre de 2016.
-O trabalho era dividido em três partes, cada uma com um objetivo:
+O trabalho é dividido em três etapas, cada uma com um objetivo:
 (1) criar um arquivo de dicionário a partir de um diretório contendo arquivos \texttt{txt};
-(2) quebrar, utilizando um algoritmo de força bruta, uma senha dado seu hash MD5;
-e (3) utilizar informações obtidas nas partes (1) e (2) para quebrar um arquivo de senhas.
+(2) utilizando um algoritmo de força bruta, quebrar uma senha dado seu hash MD5;
+e (3) utilizar informações obtidas nas etapas (1) e (2) para quebrar um arquivo de senhas.
 
-Cada parte do trabalho continua seus próprios desafios, que são elaborados adiante.
+Cada etapa do trabalho continua seus próprios desafios, que são elaborados adiante.
 
 \section{Desenvolvimento}
-Como dito na introdução, este trabalho foi dividido em três partes.
+Conforme mencionado na introdução, este trabalho foi dividido em três partes.
 Nesta seção, são descritos detalhes sobre os problemas e as soluções de cada uma delas.
 
 \subsection{Construção do arquivo dicionário}
 O primeiro objetivo do trabalho foi desenvolver um programa em C, chamado \texttt{wordlist}, para processar arquivos \texttt{txt} em um diretório e criar um arquivo dicionário.
-Para tal, o programa percorre todas as palavras dos arquivos de texto (separadas por espaço ou quebra de linha) e os adiciona a uma lista, evitando palavras duplicadas. A biblioteca \texttt{tinydir} \cite{tinydir} é usada para facilitar a iteração sobre os arquivos no diretório. Ao final da execução, esta lista é escrita em um novo arquivo de texto, chamado \texttt{dict.txt}.
+Para tal, o programa percorre todas as palavras dos arquivos de texto (separadas por espaço ou quebra de linha) e os adiciona a uma lista, evitando palavras duplicadas. A biblioteca tinydir \cite{tinydir} é utilizada para facilitar a iteração sobre os arquivos no diretório. Ao final da execução, esta lista é escrita em um novo arquivo de texto, chamado \texttt{dicionario.txt}.
 
 Para compilar o programa, basta executar:
 \begin{verbatim}
@@ -238,7 +238,7 @@ while (*count < max) {
 
 \subsection{Quebra de senha por força bruta}
 A segunda parte do trabalho foi a mais interessante delas.
-Seu objetivo era desenvolver um programa, \texttt{brutexor}, com duas funcionalidaes: primeiro, descobre uma senha com hash conhecido e, segundo, usa essa senha para decifrar uma dica que seria necessária na terceira parte do trabalho.
+Seu objetivo era desenvolver um programa, \texttt{brutexor}, com duas funcionalidades: primeiro, descobrir uma senha com hash conhecido e, segundo, utilizar essa senha para decifrar uma dica que seria necessária na terceira parte do trabalho.
 
 Para garantir que estávamos no caminho certo, foi utilizada uma \textit{rainbow table} encontrada na Internet para descobrir a senha a partir do hash MD5 e, então, decifrar a dica.
 \textit{Rainbow tables} são tabelas pré-computadas de hashes, que tornam a quebra desse tipo de cifra trivial.
@@ -271,9 +271,9 @@ for (i=0; i<20; i++) {
 \caption{O algoritmo que decifra a dica usando a chave.}
 \end{program}
 
-A seguir, seria necessário criar o programa para descobrir a chave através de exaustão utilizando o hash MD5 dado.
-Para isso, primeiro foi criado um breve algoritmo que calculava o MD5 de ``FACIL'' e o comparava com o hash conhecido, como visto no Programa 4.
-Quando compilado no Linux, o programa usa a biblioteca do OpenSSL para calcular o hash, enquanto no macOS é usada a biblioteca CommonCrypto.
+A seguir, foi necessário criar um programa para descobrir a chave através de exaustão, utilizando o hash MD5 fornecido.
+Para isso, primeiro foi criado um breve algoritmo que calculava o MD5 de ``FACIL'' e o comparava com o hash conhecido, conforme o Programa 4.
+Quando compilado no Linux, o programa utiliza a biblioteca do OpenSSL para calcular o hash, enquanto no macOS é utilizada a biblioteca CommonCrypto.
 
 \begin{program}
 \begin{lstlisting}
@@ -298,20 +298,20 @@ if (!strcmp((char *) hash,
 \caption{Algoritmo para testar o hash da chave.}
 \end{program}
 
-Por último, foi desenvolvido um algoritmo para percorrer todas as palavras possíveis de 1 a 8 caracteres utilizando um alfabeto alfanumérico (letras maiúsculas, minúsculas e algarismos), calcular o MD5 de cada um e compará-lo ao conhecido.
-Várias iterações desse algoritmo foram escritas, até ser encontrada uma versão que encontrasse a senha em tempo aceitável.
+Por último, foi desenvolvido um algoritmo para percorrer todas as palavras possíveis de 1 a 8 caracteres utilizando um alfabeto alfanumérico (letras maiúsculas, minúsculas e algarismos; ou seja, 62 caracteres), calcular os hashes MD5 de cada uma e comparar os resultados ao hash conhecido.
+Várias iterações desse algoritmo foram escritas, até ser criada uma versão que encontrasse a senha em tempo aceitável.
 
 Para desenvolver o algoritmo, o problema foi tratado como uma busca em árvore, onde cada caracter é um nó e os possíveis caracteres seguintes são filhos do caracter anterior.
-Devido às condições da palavra descritas no parágrafo anterior, o resultado é uma árvore em que cada nó tem 62 filhos ($26\times 2$ letras mais $10$ algarismos) e a profundidade máxima é 8.
+Devido às condições da palavra descritas no parágrafo anterior, o resultado é uma árvore em que cada nó tem 62 filhos e a profundidade máxima é 8.
 O número total de nós é $62^8$ (aproximadamente 218 trilhões), um valor nada trivial para percorrer.
 Nenhuma estrutura de dados similar a uma árvore foi desenvolvida; a abstração foi usada apenas para poder aplicar algoritmos conhecidos ao problema.
 
 A versão inicial utilizava uma busca em profundidade.
-A primeira palavra testada era ``A'', seguida por ``AA'' até chegar em ``AAAAAAAA'', e então percorrer todas as palavras que começam com sete A's e um oitavo caracter.
+A primeira palavra testada foi ``A'', seguida por ``AA'' até chegar em ``AAAAAAAA'', e então foram percorridas todas as palavras que começam com sete A's e um oitavo caracter.
 Quando todas as palavras começadas em `A' fossem percorridas, ele então partiria para aquelas que começam em `B'.
-O problema dessa solução é que percorrer palavras mais longas é muito demorado — o cálculo do MD5 em si não muda, mas o número de palavras possíveis cresce exponencialmente com cada caracter adicionado.
-Portanto, se a senha fosse simplesmente a palavra ``0'', o programa levaria dezenas de horas para encontrá-la, pois precisaria percorrer  todas as palavras que iniciam com todas as letras do alfabeto maiúsculas e minúsculas.
 Esta função é mostrada no Programa 5.
+O problema dessa solução é que percorrer palavras mais longas é muito demorado — o cálculo do MD5 para cada palavra não muda, mas o número de palavras possíveis cresce exponencialmente com cada caracter adicionado.
+Portanto, se a senha fosse simplesmente a palavra ``0'', por exemplo, o programa levaria dezenas de horas para encontrá-la, pois precisaria percorrer  todas as palavras que iniciam com todas as letras do alfabeto maiúsculas e minúsculas.
 
 \begin{program}
 \begin{lstlisting}
@@ -342,10 +342,10 @@ char *brute_force(char *word,
 \end{program}
 
 A próxima versão do algoritmo incorporou paralelização em CPU utilizando a biblioteca OpenMP.
-Dessa forma, cada thread da CPU seria responsável por processar palavras iniciadas com certas letras (um conjunto de letras é atribuído para cada thread).
+Dessa forma, cada thread da CPU era responsável por processar palavras iniciadas com certas letras (um conjunto de letras é atribuído para cada thread).
 Apesar do processo acelerado pela computação paralela, a busca em profundidade permaneceu extremamente lenta.
 O Programa 6 mostra o laço e os comandos OpenMP para permitir a paralelização.
-A variável \texttt{thread\_alphabet} contém os segmentos do alfabeto que devem ser usados como caracteres iniciais para cada thread.
+A variável \texttt{thread\_alphabet} contém os segmentos do alfabeto que devem ser utilizados como caracteres iniciais para cada thread.
 A thread 0, por exemplo, é responsável por testar todas as palavras que iniciam em `A' e outras letras de acordo com o número de threads. 
 
 \begin{program}
@@ -370,7 +370,7 @@ A thread 0, por exemplo, é responsável por testar todas as palavras que inicia
     }
     #pragma omp taskwait
 }\end{lstlisting}
-\caption{Comandos OpenMP e laço para paralelizar execução.}
+\caption{Comandos OpenMP e laço para paralelizar a execução.}
 \end{program}
 
 \begin{program}
@@ -401,7 +401,7 @@ Para tal, há um laço adicional na hora de chamar a função de força bruta em
 Esse laço faz com que a função seja chamada oito vezes, com o tamanho máximo das palavras aumentado a cada iteração.
 Assim, na primeira iteração a função testará apenas palavras com um caracter, até que na última sejam testadas apenas palavras com oito.
 Esse laço adicional é mostrado no Programa 7.
-Vale observar que a variável \texttt{done} é usada para que todas as threads parem a execução quando uma delas encontrar a senha.
+Vale observar que a variável \texttt{done} é utilizada para que todas as threads parem a execução quando uma delas encontrar a senha.
 
 O Programa 8 é a versão final da função de força-bruta, incluindo todas as modificações para a paralelização e a busca em largura.
 Os condicionais também foram reposicionados para otimizar a execução.
@@ -442,7 +442,7 @@ void brute_force(char *word,
 
 Por fim, o programa sofreu pequenas alterações para funcionar com ou sem paralelização e independente do número de threads disponíveis no computador.
 O Programa 9 mostra o processo para criar blocos do alfabeto que serão alocados para cada thread disponível.
-A constante OPENMP é definida apenas se o programa for compilado para ser compatível com multiprocessamento.
+A constante \texttt{OPENMP} é definida apenas se o programa foi compilado para ser compatível com multiprocessamento.
 
 \begin{program}
 \begin{lstlisting}
@@ -472,31 +472,31 @@ for (i=0; i<alphabet_len; i++) {
 
 \subsection{Quebra de arquivo de senha usando\\ arquivo dicionário}
 
-O objetivo da terceira e última parte do trabalho era usar a dica encontrada na segunda parte para encontrar arquivos de texto e então usar o \texttt{wordlist} para gerar um arquivo dicionário.
-Esse arquivo dicionário deveria então ser usado como argumento para o programa John The Ripper, uma solução open-source para quebra de senhas, para quebrar o arquivo \texttt{\_etc\_shadow.txt}.
+O objetivo da terceira e última parte do trabalho era utilizar a dica decifrada na segunda etapa para encontrar arquivos de texto e então utilizar o \texttt{wordlist} para gerar um arquivo dicionário.
+Esse arquivo dicionário deveria então ser utilizado como argumento para o programa John The Ripper, uma solução open-source para quebra de senhas, para quebrar o arquivo \texttt{\_etc\_shadow.txt}.
 
-Dada a dica encontrada na segunda parte, seria necessário criar um diretório contendo arquivos de texto com letras de músicas da banda Legião Urbana.
-Portanto, foi desenvolvido um script em Python, \texttt{crawler.py} que utiliza a biblioteca BeautifulSoup para pegar as letras das músicas do site \textbf{\url{letras.mus.br}}.
-O script limpa o texto de tags HTML e salva cada letra em um arquivo de texto separado, usando o título de cada canção como nome.
-Ao rodar o \texttt{wordlist} com essas letras, o resultado é um arquivo \texttt{dict.txt} com 5927 palavras distintas.
+Com a dica encontrada na segunda parte, foi necessário criar um diretório contendo arquivos de texto com letras de músicas da banda Legião Urbana.
+Portanto, foi desenvolvido um script em Python, \texttt{crawler.py} que utiliza a biblioteca Beautiful Soup \cite{beautifulsoup} para obter as letras das músicas através do site \textbf{\url{letras.mus.br}}.
+O script limpa o texto de tags HTML e salva cada letra em um arquivo de texto separado, utilizando o título de cada canção como nome.
+Ao rodar o \texttt{wordlist} com essas letras, o resultado é um arquivo \texttt{dicionario.txt} com 5927 palavras distintas.
 
-Após a execução do script Python e do \texttt{wordlist}, é possível utilizar esses dados para quebrar a senha com o John The Ripper utilizando o seguinte comando:
+Após a execução do script Python e do \texttt{wordlist}, é possível utilizar esses dados para quebrar a senha com o John The Ripper através do seguinte comando:
 
 \begin{verbatim}
-john --wordlist=dict.txt _etc_shadow.txt
+john --wordlist=dicionario.txt _etc_shadow.txt
 \end{verbatim}
 
 Dessa forma, foi possível quebrar uma das senhas presentes no arquivo, a do usuário \textit{eva} — ``Cavalos-marinhos'', palavra presente na letra da canção ``Vento no Litoral''.
 Através de conversas com colegas, foi descoberto que a senha do usuário \textit{beto} era ``cavalo-marinho'', mas essa palavra não está presente em nenhuma letra.
-Para verificar isso, foi criado um arquivo de texto contendo apenas essas duas palavras; com ele, o John The Ripper foi capaz de quebrar ambas senhas.
+Para verificar isso, foi criado um arquivo de texto contendo apenas essas duas palavras; com ele, o John The Ripper foi capaz de quebrar ambas as senhas.
 
 \section{Resultados e conclusões}
 
-Para as execuções dos algoritmos, dois computadores foram usados: ``SgtPepper'', um MacBook Pro, e ``Packard'', um desktop customizado.
-O programa \texttt{wordlist} roda rapidamente em ambos computadores, então sua análise não é muito interessante.
+Para as execuções dos algoritmos, dois computadores foram utilizados: ``SgtPepper'', um MacBook Pro, e ``Packard'', um desktop customizado.
+O programa \texttt{wordlist} roda rapidamente em ambos os computadores, então sua análise não é muito interessante.
 
 O segundo programa, \texttt{brutexor}, pode ser extremamente lento ou rápido dependendo de algumas condições, portanto há mais a ser dito sobre ele.
-Usando a primeira versão do algoritmo, usando busca em profundidade e sem paralelização, o programa rodou por mais de vinte horas sem sucesso — essa demora motivou o desenvolvimento de versões mais eficientes.
+Utilizando a primeira versão do algoritmo, com busca em profundidade e sem paralelização, o programa rodou por mais de vinte horas sem sucesso — essa demora motivou o desenvolvimento de versões mais eficientes.
 
 \begin{center}
   \begin{tabular}{ l | l | l }
@@ -516,21 +516,21 @@ Usando a primeira versão do algoritmo, usando busca em profundidade e sem paral
 
 O Packard, que dispõe de um processador quad-core com \textit{hyperthreading}, foi capaz de realizar o algoritmo de força bruta em oito threads paralelas.
 Devido à forma como as letras foram distribuídas, muito rapidamente a thread nº 5 chega à senha ``FACIL'' (pois ela já começa testando as palavras iniciadas em `F').
-Portanto, a execução do programa \texttt{brutexor} nesse computador leva, aproximadamente, meio segundo.
+Portanto, o programa \texttt{brutexor} nesse computador executa em aproximadamente meio segundo.
 
 Devido a complicações em instalar a biblioteca OpenMP no macOS, o programa foi testado no SgtPepper sem utilizar paralelização.
 Rodando em apenas uma thread, o \texttt{brutexor} levou aproximadamente 38 segundos para encontrar a senha desejada.
 
 Um fator interessante deste problema é que, dependendo da senha a ser encontrada, ele pode executar em décimos de segundos ou dezenas de horas.
 Em particular, qualquer senha de oito caracteres levaria muito tempo para ser encontrada — e portanto a busca em largura foi adotada.
-A senha começar com `F' também ajuda, pois é uma das primeiras letras do alfabeto e será processada rapidamente por uma das threads.
+A senha começar com `F' também ajuda, pois é uma das primeiras letras do alfabeto e será processada rapidamente por uma das threads — se a distribuição de caracteres para as threads fosse diferente, o tempo para encontrar a senha também seria diferente.
 Sob a presunção que senhas curtas são mais comuns, acreditamos que o caminho adotado é o mais lógico para este tipo de problema.
 
 O tempo de execução do John The Ripper em ambos computadores também foi comparado.
 No Packard, encontrar a senha ``Cavalos-marinhos'' (e descobrir que as outras não estavam no dicionário) levou 51 segundos, enquanto, no SgtPepper, o processo levou cerca de 30 segundos.
 Isso ocorre porque o Core i5 presente no SgtPepper, apesar de ser mais lento que o Core i7 do Packard, é da família Haswell, que incorporou modificações na arquitetura que favoreceram funções criptográficas, além do armazenamento em SSD que acelera a leitura do arquivo de dicionário. 
 
-Por fim, o desenvolvimento do trabalho nos mostrou que o processo para quebrar senhas com oito ou mais caracteres pode ser incrivelmente demorado, caso não se tenha uma \textit{rainbow table} completa do algoritmo de hash usado; portanto métodos de engenharia social estão cada vez mais comuns entre atacantes.
+Por fim, o desenvolvimento do trabalho nos mostrou que o processo para quebrar senhas com oito ou mais caracteres pode ser incrivelmente demorado, caso não se tenha uma \textit{rainbow table} completa do algoritmo de hash utilizado; portanto métodos de engenharia social estão cada vez mais comuns entre atacantes.
 As fases de otimização do algoritmo de força bruta também foram fascinantes por um ponto de vista computacional, por mostrarem como formas antigas de segurança, que é o caso do MD5, tornam-se obsoletas com o avanço tecnológico dos microprocessadores..
 
 %
