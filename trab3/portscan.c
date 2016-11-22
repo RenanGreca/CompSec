@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     char *ip = malloc(IP_LENGTH*sizeof(char));
 
     // ip = showips();
-    ip = "192.168.1.110";
+    strcpy(ip, "192.168.1.110");
 
     // Isolate subnet from IP
     int i = 0;
