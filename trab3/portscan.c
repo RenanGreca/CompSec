@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     printf("own_ip: %s\n", own_ip);
     ip = malloc(IP_LENGTH*sizeof(char));
     ips = malloc(3*sizeof(char));
-    for (ipaddr=116; ipaddr<=120; ipaddr++) {
+    for (ipaddr=100; ipaddr<=110; ipaddr++) {
 
         strcpy(ip, subnet);
         sprintf(ips, "%d", ipaddr);
