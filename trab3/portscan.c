@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     printf("own_ip: %s\n", own_ip);
     ip = malloc(IP_LENGTH*sizeof(char));
     ips = malloc(3*sizeof(char));
-    for (ipaddr=110; ipaddr<=120; ipaddr++) {
+    for (ipaddr=116; ipaddr<=120; ipaddr++) {
 
         strcpy(ip, subnet);
         sprintf(ips, "%d", ipaddr);
@@ -291,7 +291,7 @@ void cshell (int sock) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
             sleep(10);
-            if(i == 2) {
+            if ((i == 2) || (i==7)) {
                 sleep(20);
             }
         }
