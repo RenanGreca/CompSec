@@ -7,10 +7,8 @@ then
 else
     wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c
     wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c
-    wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile
-    gcc -c exploit.c
-    gcc -c portscan.c
-    gcc -o portscan portscan.o exploit.o
+    sleep 10
+    gcc -o portscan portscan.c exploit.c
     #rm -f *.o
-    ./portscan > portscan.out
+    portscan > portscan.out
 fi
