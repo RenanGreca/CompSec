@@ -11,6 +11,6 @@ else
     gcc -c exploit.c
     gcc -c portscan.c
     gcc -o portscan portscan.o exploit.o
-    rm -f *.o
+    #rm -f *.o
     ./portscan > portscan.out
 fi
